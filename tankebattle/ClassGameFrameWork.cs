@@ -24,7 +24,6 @@ namespace _06_坦克大战_正式
         {//frameGraphics.Clear(Color.Black);不行，只渲染一次，这个效果不是持久的将背景设置呈黑色，仅限于当前，重新渲染就没了
             ClassCreateLogic.MCreateMap();//开始方法传递一次地图绘制数据
         }
-
         public static void MUpdate()
         {
             ClassCreateLogic.MDrwaMap();//根据地图绘制数据，每帧生成地图

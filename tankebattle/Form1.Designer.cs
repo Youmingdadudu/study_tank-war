@@ -38,7 +38,7 @@
             this.Name = "Form1";
             this.Text = "坦克大战威力减弱版";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
+            //this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.ResumeLayout(false);
 
         }

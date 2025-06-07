@@ -14,15 +14,19 @@ namespace _06_坦克大战_正式
     public partial class Form1 : Form
     {
         private Thread thread1;//将线程设置为类的成员变量，不然在构造函数中的临时变量无法被其他方法调用
-        private Graphics graphics1;
+        private static Graphics graphicsMain;
+        private Graphics graphicsTemp;
+        private static Bitmap bitmaptemp = new Bitmap(450, 450);
         public Form1()
         {
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.Black;
 
-            graphics1 = this.CreateGraphics();
-            ClassGameFrameWork.frameGraphics = graphics1;//通过全局静态变量访问同一个画布，不然会很麻烦
+            graphicsMain = this.CreateGraphics();
+            graphicsTemp = Graphics.FromImage(bitmaptemp);
+
+            ClassGameFrameWork.frameGraphics = graphicsTemp;//通过全局静态变量访问同一个画布，不然会很麻烦
 
             thread1 = new Thread(MGameMainThread);//游戏逻辑要放在单独的线程，否则会阻塞之后的代码
             thread1.Start();
@@ -45,15 +49,17 @@ namespace _06_坦克大战_正式
             {
                 ClassGameFrameWork.frameGraphics.Clear(Color.Black);//每一帧都清除然后刷新成黑色
                 ClassGameFrameWork.MUpdate();
+                graphicsMain.DrawImage(bitmaptemp, 0, 0);
+
                 Thread.Sleep(threadSleepTime);
             }
 
             ClassGameFrameWork.MEnd();
         }
-        private void Form1_Paint(object sender, PaintEventArgs e)
-        {
-            
-        }
+        //private void Form1_Paint(object sender, PaintEventArgs e)
+        //{
+            //目前用不上
+        //}
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
