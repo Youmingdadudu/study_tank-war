@@ -33,7 +33,7 @@
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;//不受用户分辨率倍率影响
             this.ClientSize = new System.Drawing.Size(450, 450);
             this.Name = "Form1";
             this.Text = "坦克大战威力减弱版";
