@@ -21,15 +21,15 @@ namespace _06_坦克大战_正式.baseclass
         public Bitmap bitmapLeft { get; set; }
         public Bitmap bitmapRight { get; set; }
 
-        public ClassActiveClass(int x,int y, Bitmap bt1,Bitmap bit2, Bitmap bit3, Bitmap bit4,int spead) : base(x,y)
-        {
+        public ClassActiveClass(int x,int y, int spead,Bitmap bitUp,Bitmap bitDown, Bitmap bitLeft, Bitmap bitRight) : base(x,y)
+        {//方向默认上，所以构造函数不用传递了
             this.X = x;
             this.Y = y;
-            this.bitmapUp = bt1;
-            this.bitmapDown = bit2;
-            this.bitmapLeft = bit3;
-            this.bitmapRight = bit4;
             this.speed = spead;
+            this.bitmapUp = bitUp;
+            this.bitmapDown = bitDown;
+            this.bitmapLeft = bitLeft;
+            this.bitmapRight = bitRight;
         }
 
 

@@ -16,7 +16,8 @@ namespace _06_坦克大战_正式
         private Thread thread1;//将线程设置为类的成员变量，不然在构造函数中的临时变量无法被其他方法调用
         private static Graphics graphicsMain;
         private Graphics graphicsTemp;
-        private static Bitmap bitmaptemp = new Bitmap(450, 450);
+        private static Bitmap bitmaptemp = new Bitmap(390, 390);
+        public static Bitmap Bttp = bitmaptemp;
         public Form1()
         {
             InitializeComponent();

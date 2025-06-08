@@ -1,4 +1,5 @@
 ﻿using _06_坦克大战_正式.baseclass;
+using _06_坦克大战_正式.Properties;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,8 +11,16 @@ namespace _06_坦克大战_正式.activeobjectclass
 {
     internal class ClassMy : ClassActiveClass
     {
-        public ClassMy(int x, int y, Bitmap bt1, Bitmap bit2, Bitmap bit3, Bitmap bit4, int spead) : base(x, y, bt1, bit2, bit3, bit4, spead)
+        public ClassMy(int x, int y, int spead) : base(x, y, spead, Resources.MyTankUp, Resources.MyTankDown, Resources.MyTankLeft, Resources.MyTankRight)
         {
+            this.X = x;
+            this.Y = y;
+            this.speed = spead;
+            dir = EM_Direction.Up;
+            bitmapUp = Resources.MyTankUp;
+            bitmapDown = Resources.MyTankDown;
+            bitmapLeft = Resources.MyTankLeft;
+            bitmapRight = Resources.MyTankRight;
         }
     }
 }
