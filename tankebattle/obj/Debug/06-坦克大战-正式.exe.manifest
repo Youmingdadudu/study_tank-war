@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="06-坦克大战-正式.exe" size="1279472">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="06-坦克大战-正式.exe" size="1280496">
       <assemblyIdentity name="06-坦克大战-正式" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>+sfnUFjN//qwHXnbRDJxU4L/rtZ+pI0vuCQx/ykTGJs=</dsig:DigestValue>
+        <dsig:DigestValue>lrZBp1zh7Mu/FSoxO3oiLZa7qBV0VVENSaV/lDtNEi4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

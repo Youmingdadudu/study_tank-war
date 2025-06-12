@@ -1,4 +1,5 @@
 ﻿using _06_坦克大战_正式.activeobjectclass;
+using _06_坦克大战_正式.baseclass;
 using _06_坦克大战_正式.Properties;
 using _06_坦克大战_正式.staticbojectclass;
 using System;
@@ -7,6 +8,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using static _06_坦克大战_正式.baseclass.ClassActiveObject;
 
 namespace _06_坦克大战_正式.logic
 {
@@ -17,7 +20,16 @@ namespace _06_坦克大战_正式.logic
         private static List<ClassWall> liststeels = new List<ClassWall>();
         //private static List<ClassProp> listprops = new List<ClassProp>();
         private static ClassProp BOSS;
-        private static ClassMy myTank;
+        private static ClassMy myTank;//本来想再整个public的引用来间接修改数据（朝向啥的），但是这个小游戏没必要考虑安全性，就偷懒了直接改成public2333
+        public static ClassMy myTanktemp;//算了不偷懒了挑战自己233
+
+        internal static void MCreateMyTank()
+        {//固定生成在老巢的左边
+            int xPosition = (Form1.Bttp.Width - 30) / 2 - 45;
+            int yPosition = Form1.Bttp.Height - 30;
+            myTank = new ClassMy(xPosition, yPosition, 1);
+            myTanktemp = myTank;
+        }
         public static void MCreateBoss()//现在只有一关，若是有多关每关都需要生成boss,没准一关地图比一关大呢233
         {//将boss和周边的墙一起生成，固定在地图下半的底部中间
             double xPasition = (Form1.Bttp.Width - 30) / 2;
@@ -30,12 +42,7 @@ namespace _06_坦克大战_正式.logic
             MCreateWall(x1, y2, 2, 0.5, Resources.wall, listwallsBoss);
             MCreateWall(x2, y1, 0.5, 1, Resources.wall, listwallsBoss);
         }
-        public static void MDrawBoss()
-        {
-            BOSS.MDrawSelf();
-            foreach (ClassWall wl in listwallsBoss)
-                wl.MDrawSelf();
-        }
+        
         public static void MCreateMap()
         {
             #region 生成地图
@@ -68,13 +75,7 @@ namespace _06_坦克大战_正式.logic
             #endregion
         }
 
-        public static void MDrawMap()//实际画图方法，下面的是计算图形位置方法
-        {
-            foreach (ClassWall wall in listwalls)//将墙列表中的每个墙块依次绘制在画布上
-                wall.MDrawSelf();
-            foreach(ClassWall steel in liststeels)
-                steel.MDrawSelf();
-        }
+        
         #region//旧构造方法，只能创建4个或1个墙块，这不行，我还需要横2或竖2.我不想单独写一个方法，所以新方法引入xcount和ycount的新参数，就方法废弃
         //private static void MCreateWall(double x, double y, double count,Bitmap bt,List<ClassWall> listwall)//在指定位置竖排生成对应个数，对应类型的墙体，每个墙体由4个砖块图像组成
         //{//我只需要在1/2/3或者1.5/2.5这样的地方生成砖块即可
@@ -112,17 +113,70 @@ namespace _06_坦克大战_正式.logic
                     listwall.Add(wall);
                 }
         }
-
-        internal static void MCreateMyTank()
-        {//固定生成在老巢的左边
-            int xPosition = (Form1.Bttp.Width - 30) / 2 - 45;
-            int yPosition = Form1.Bttp.Height - 30 ;
-            myTank = new ClassMy(xPosition, yPosition, 1);
+        #region 把绘图方法合并到一起
+        /*public static void MDrawMap()//实际画图方法，上面的是计算图形位置方法
+        {
+            foreach (ClassWall wall in listwalls)//将墙列表中的每个墙块依次绘制在画布上
+                wall.MDrawSelf();
+            foreach (ClassWall steel in liststeels)
+                steel.MDrawSelf();
         }
+
+        public static void MDrawBoss()
+        {
+            BOSS.MDrawSelf();
+            foreach (ClassWall wl in listwallsBoss)
+                wl.MDrawSelf();
+        }
+
         internal static void MDrawMyTank()
         {
+            myTank = myTanktemp;
+            if(ClassCreateLogic.myTanktemp.isMoving == true)//我要做的就是把移动移到主循环，跟帧率绑定
+            {
+                switch (ClassCreateLogic.myTanktemp.dir)
+                {
+                    case EM_Direction.Up:
+                        myTanktemp.Y -= myTanktemp.speed;
+                        break;
+                    case EM_Direction.Down:
+                        myTanktemp.Y += myTanktemp.speed;
+                        break;
+                    case EM_Direction.Left:
+                        myTanktemp.X -= myTanktemp.speed;
+                        break;
+                    case EM_Direction.Right:
+                        myTanktemp.X += myTanktemp.speed;
+                        break;
+                }
+            }
             myTank.MDrawSelf();
+        }*/
+        #endregion
+
+        public static void MDrawStaticObject()//绘制静态对象方法
+        {
+            BOSS.MDrawSelf();
+            foreach (ClassWall wl in listwallsBoss)
+                wl.MDrawSelf();
+            foreach (ClassWall wall in listwalls)
+                wall.MDrawSelf();
+            foreach (ClassWall steel in liststeels)
+                steel.MDrawSelf();
         }
+
+        
+        public static void MDrawActiveObject()//绘制动态对象方法
+        {
+            //myTank = myTanktemp;//不需要这句，因为是引用类型，二者指向了同一个对象
+            ClassShowLogic.MMoveCheck(myTanktemp);//先调用检测，如果撞墙了就将ismoving改为flase
+            if (ClassCreateLogic.myTanktemp.isMoving == true)
+               ClassShowLogic.MMove(myTanktemp);
+            myTank.MDrawSelf();
+
+
+        }
+
 
     }
 }

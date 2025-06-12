@@ -30,9 +30,15 @@ namespace _06_坦克大战_正式
         public static void MUpdate()
         {
             //ClassProp.MDrawSelf();//需要创建一个道具生成方法，随机生成道具再里面调用MD方法，现在我只需要把BOSS（老家）整出来就行
-            ClassCreateLogic.MDrawBoss();
-            ClassCreateLogic.MDrawMap();//根据地图绘制数据，每帧生成地图
-            ClassCreateLogic.MDrawMyTank();
+            //ClassCreateLogic.MDrawBoss();
+            //ClassCreateLogic.MDrawMap();//根据地图绘制数据，每帧生成地图
+            //ClassCreateLogic.MDrawMyTank();
+
+            ClassCreateLogic.MDrawStaticObject();
+            ClassCreateLogic.MDrawActiveObject();
+
+            //以下为动态方法
+            //ClassShowLogic.MMoveDraw();
             
         }
         public static void MEnd()

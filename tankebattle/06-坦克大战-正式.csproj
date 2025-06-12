@@ -77,7 +77,7 @@
     <Compile Include="activeobjectclass\ClassEnemy.cs" />
     <Compile Include="activeobjectclass\ClassMy.cs" />
     <Compile Include="activeobjectclass\ClassShow.cs" />
-    <Compile Include="baseclass\ClassActiveClass.cs" />
+    <Compile Include="baseclass\ClassActiveObject.cs" />
     <Compile Include="baseclass\ClassBase.cs" />
     <Compile Include="baseclass\ClassStaticObject.cs" />
     <Compile Include="ClassGameFrameWork.cs" />

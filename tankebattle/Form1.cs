@@ -1,4 +1,5 @@
-﻿using System;
+﻿using _06_坦克大战_正式.logic;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -66,5 +67,38 @@ namespace _06_坦克大战_正式
         {
             thread1.Abort();
         }
+
+        #region 没用的逻辑
+        //private void Form1_KeyDown(object sender, KeyEventArgs e)//某个键按下时触发
+        //{
+        //    sender = "Down";
+        //    if (!ClassShowLogic.listIsMove.Contains(e.KeyCode))//如没果有这个键，才加入，这样不管按住多久都只有一个成员
+        //    {
+        //        ClassShowLogic.listIsMove.Remove(e.KeyCode);
+        //        ClassShowLogic.MMovePosition(sender, e);
+        //    }
+        //}
+        //private void Form1_KeyUp(object sender, KeyEventArgs e)//某个键松开时触发
+        //{
+        //    sender = "Up";
+        //    if (ClassShowLogic.listIsMove.Contains(e.KeyCode))//如果有这个键，就清除。这个属性即使没有数据也不会报错
+        //    {
+        //        ClassShowLogic.listIsMove.Remove(e.KeyCode);
+        //    }
+        //    if (ClassShowLogic.listIsMove.Count == 0)
+        //        ClassShowLogic.MMovePosition(sender, e);
+        //}
+        #endregion
+        private void Form1_KeyDown(object sender, KeyEventArgs e)//某个键按下时触发
+        {
+            sender = "Down";
+            ClassShowLogic.MMovePosition(sender, e);
+        }
+        private void Form1_KeyUp(object sender, KeyEventArgs e)//某个键松开时触发
+        {
+            sender = "Up";
+            ClassShowLogic.MMovePosition(sender, e);
+        }
+
     }
 }

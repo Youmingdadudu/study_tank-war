@@ -9,14 +9,13 @@ using System.Threading.Tasks;
 
 namespace _06_坦克大战_正式.activeobjectclass
 {
-    internal class ClassMy : ClassActiveClass
+    internal class ClassMy : ClassActiveObject
     {
         public ClassMy(int x, int y, int spead) : base(x, y, spead, Resources.MyTankUp, Resources.MyTankDown, Resources.MyTankLeft, Resources.MyTankRight)
         {
             this.X = x;
             this.Y = y;
             this.speed = spead;
-            dir = EM_Direction.Up;
             bitmapUp = Resources.MyTankUp;
             bitmapDown = Resources.MyTankDown;
             bitmapLeft = Resources.MyTankLeft;
