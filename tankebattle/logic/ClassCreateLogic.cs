@@ -15,13 +15,7 @@ namespace _06_坦克大战_正式.logic
 {
     internal class ClassCreateLogic : ClassBaseLogic//静态生成逻辑
     {
-        private static List<ClassWall> listwalls = new List<ClassWall>();
-        private static List<ClassWall> listwallsBoss = new List<ClassWall>();
-        private static List<ClassWall> liststeels = new List<ClassWall>();
-        //private static List<ClassProp> listprops = new List<ClassProp>();
-        private static ClassProp BOSS;
-        private static ClassMy myTank;//本来想再整个public的引用来间接修改数据（朝向啥的），但是这个小游戏没必要考虑安全性，就偷懒了直接改成public2333
-        public static ClassMy myTanktemp;//算了不偷懒了挑战自己233
+        
 
         internal static void MCreateMyTank()
         {//固定生成在老巢的左边
@@ -38,9 +32,9 @@ namespace _06_坦克大战_正式.logic
             double y1 = yPasition / 30, y2 = (yPasition -15) / 30;
             BOSS = new ClassProp((int)xPasition, (int)yPasition , Resources.Boss);
             //生成基地防御砖墙
-            MCreateWall(x1, y1, 0.5, 1, Resources.wall, listwallsBoss);
-            MCreateWall(x1, y2, 2, 0.5, Resources.wall, listwallsBoss);
-            MCreateWall(x2, y1, 0.5, 1, Resources.wall, listwallsBoss);
+            MCreateWall(x1, y1, 0.5, 1, Resources.wall, listwalls);
+            MCreateWall(x1, y2, 2, 0.5, Resources.wall, listwalls);
+            MCreateWall(x2, y1, 0.5, 1, Resources.wall, listwalls);
         }
         
         public static void MCreateMap()
@@ -157,8 +151,8 @@ namespace _06_坦克大战_正式.logic
         public static void MDrawStaticObject()//绘制静态对象方法
         {
             BOSS.MDrawSelf();
-            foreach (ClassWall wl in listwallsBoss)
-                wl.MDrawSelf();
+            //foreach (ClassWall wl in listwallsBoss)
+            //    wl.MDrawSelf();
             foreach (ClassWall wall in listwalls)
                 wall.MDrawSelf();
             foreach (ClassWall steel in liststeels)

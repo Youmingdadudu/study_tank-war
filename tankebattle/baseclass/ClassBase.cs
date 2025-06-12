@@ -14,6 +14,13 @@ namespace _06_坦克大战_正式.baseclass
 
         public int Width { get; set; }//高和宽
         public int Height { get; set; }
+        public Rectangle rectangle//自动返回当前矩形的属性
+        {
+            get
+            {
+                return new Rectangle(X, Y, Width, Height);
+            }
+        }
         protected abstract Bitmap MGetBitmap();
         protected ClassBase(int x,int y)
         {

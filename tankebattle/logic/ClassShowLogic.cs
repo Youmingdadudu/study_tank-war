@@ -1,7 +1,9 @@
 ﻿using _06_坦克大战_正式.activeobjectclass;
 using _06_坦克大战_正式.baseclass;
+using _06_坦克大战_正式.staticbojectclass;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -116,36 +118,94 @@ namespace _06_坦克大战_正式.logic
         }
 
         //移动方法
-        public static void MMove(ClassActiveObject Dir)
+        public static void MMove(ClassActiveObject AObject)
         {//根据朝向移动方法，这样敌我单位都调用这个就可以了
-            switch (Dir.dir)
+            switch (AObject.dir)
             {
                 case EM_Direction.Up:
-                    Dir.Y -= Dir.speed;
+                    AObject.Y -= AObject.speed;
                     break;
                 case EM_Direction.Down:
-                    Dir.Y += Dir.speed;
+                    AObject.Y += AObject.speed;
                     break;
                 case EM_Direction.Left:
-                    Dir.X -= Dir.speed;
+                    AObject.X -= AObject.speed;
                     break;
                 case EM_Direction.Right:
-                    Dir.X += Dir.speed;
+                    AObject.X += AObject.speed;
                     break;
             }
         }
         #endregion
 
         #region 移动检测和碰撞检测
-        public static void MMoveCheck(ClassActiveObject Dir)//子弹的碰撞不在这里
+
+        //检测物体碰撞方法
+        private static ClassWall MIsCollidedAOlist(Rectangle rta, List<ClassWall> listao)//墙列表检测，哎列表不支持父类范型改用子类泛型//静态列表对象检测逻辑
+        {
+            foreach (ClassWall o in listao)
+            {
+                if(o.rectangle.IntersectsWith(rta))
+                    return o;
+            }
+            return null;
+        }
+        private static ClassProp MIsCollidedAO(Rectangle rta, ClassProp ao)//道具检测//静态单个对象检测逻辑（目前就一个boss，没有其他道具）
+        {
+            if (ao.rectangle.IntersectsWith(rta))//单个判断，以后可以改为道具列表，boss恒定0号元素即可
+            {
+                return ao;
+            }
+                return null;
+
+        }
+
+        public static void MMoveCheck(ClassActiveObject AObject)//子弹的碰撞不在这里
         {
             //检测是否超出窗体
-            if((Dir.dir==EM_Direction.Right && Dir.X > (390-Dir.Width)) //不能直接390，得减去坦克的高宽，因为坦克的坐标也在图片左上角
-                || (Dir.dir == EM_Direction.Left && Dir.X < 0 )//需要每个方向单独判定，否贼只判定坐标，那么一旦碰到边界，就会将ismoving一直等于flase
-                || (Dir.dir == EM_Direction.Down && Dir.Y > 390- Dir.Height) 
-                || (Dir.dir == EM_Direction.Up && Dir.Y < 0))
-                Dir.isMoving = false;
+            if((AObject.dir==EM_Direction.Right && AObject.X > (390- AObject.Width)) //不能直接390，得减去坦克的高宽，因为坦克的坐标也在图片左上角
+                || (AObject.dir == EM_Direction.Left && AObject.X < 0 )//需要每个方向单独判定，否贼只判定坐标，那么一旦碰到边界，就会将ismoving一直等于flase
+                || (AObject.dir == EM_Direction.Down && AObject.Y > 390- AObject.Height) 
+                || (AObject.dir == EM_Direction.Up && AObject.Y < 0))
+            {
+                AObject.isMoving = false;
+                return;//如果碰到窗体就不需要再检测是否碰到墙了
+            }
+
             //检测是否碰撞墙体
+            //Rectangle rtaTemp = AObject.rectangle;//临时矩形，这属性我设置为只读了懒得改了233（因为如果用自身矩形判断，会导致撞上了就没法动的问题（老师说的，我觉得不会））
+            Rectangle rtaTemp = new Rectangle();
+            rtaTemp = AObject.rectangle;
+            switch (AObject.dir)
+            {
+                case EM_Direction.Up:
+                    rtaTemp.Y -= AObject.speed;//将临时矩形的坐标设定为当前方向下一帧速度后的图片
+                    break;
+                case EM_Direction.Down:
+                    rtaTemp.Y += AObject.speed;
+                    break;
+                case EM_Direction.Left:
+                    rtaTemp.X -= AObject.speed;
+                    break;
+                case EM_Direction.Right:
+                    rtaTemp.X += AObject.speed;//不小心写成-=了难怪不动呢。如果这么写，会导致向右走矩形碰到一起，因为矩形已经嵌在一起了，等于向右嵌进去1像素，其他方向-1像素也相交了，这样无论哪个方向都不行了
+                    break;
+            }
+            if (MIsCollidedAOlist(rtaTemp, listwalls) != null)
+            {
+                AObject.isMoving = false;
+                return;//碰到一个墙后续就不需要检测了
+            }
+            if (MIsCollidedAOlist(rtaTemp, liststeels) != null)
+            {
+                AObject.isMoving = false;
+                return;
+            }
+            if (MIsCollidedAO(rtaTemp, BOSS) != null)
+            {
+                AObject.isMoving = false;
+                return;
+            }
         }
 
 

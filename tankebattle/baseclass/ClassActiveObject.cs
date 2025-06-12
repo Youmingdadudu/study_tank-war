@@ -24,6 +24,9 @@ namespace _06_坦克大战_正式.baseclass
         public Bitmap bitmapLeft { get; set; }
         public Bitmap bitmapRight { get; set; }
 
+        
+              
+
         public enum EM_Direction
         {
             Up, Down, Left, Right
@@ -73,6 +76,8 @@ namespace _06_坦克大战_正式.baseclass
             bitmap.MakeTransparent(Color.Black);
             return bitmap;
         }
+
+
         
     }
 }
