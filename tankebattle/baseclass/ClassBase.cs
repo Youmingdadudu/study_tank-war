@@ -22,6 +22,10 @@ namespace _06_坦克大战_正式.baseclass
             }
         }
         protected abstract Bitmap MGetBitmap();
+        protected ClassBase()
+        {
+
+        }
         protected ClassBase(int x,int y)
         {
             this.X = x;

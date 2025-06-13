@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace _06_坦克大战_正式
 {
+    //难度不同：敌人的生成速度，生命值，速度啥的
     internal class ClassGameFrameWork
     {
         #region 游戏框架类设计
@@ -26,6 +27,8 @@ namespace _06_坦克大战_正式
             ClassCreateLogic.MCreateBoss();//开始时传递一次boss位置数据
             ClassCreateLogic.MCreateMap();//开始方法传递一次地图绘制数据
             ClassCreateLogic.MCreateMyTank();
+
+            ClassCreateLogic.MCreatStart();//创建敌人和道具等元素的信息
         }
         public static void MUpdate()
         {

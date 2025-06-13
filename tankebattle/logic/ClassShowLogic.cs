@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static _06_坦克大战_正式.baseclass.ClassActiveObject;
@@ -28,6 +29,7 @@ namespace _06_坦克大战_正式.logic
         //public static List<Keys> listIsMove = new List<Keys>();//用数字不行，copilot说键盘连发会添加一大堆1。要想只在按下时触发，需要改逻辑，用int会很麻烦，要先判定键入再添加1234，不如直接判断键入。
 
         #endregion
+
 
         #region 旧移动方法
         //enum EM_Direction//早知道和老师学也放在mytank类里了，真麻烦啊23333
@@ -97,23 +99,28 @@ namespace _06_坦克大战_正式.logic
                 switch (args.KeyCode)//我要做的就是把移动移到主循环，跟帧率绑定
                 {
                     case Keys.W:
-                        ClassCreateLogic.myTanktemp.dir = ClassMy.EM_Direction.Up;
+                        if(myTanktemp.dir != EM_Direction.Up)
+                            myTanktemp.dir = EM_Direction.Up;
                         break;
                     case Keys.S:
-                        ClassCreateLogic.myTanktemp.dir = ClassMy.EM_Direction.Down;
+                        if (myTanktemp.dir != EM_Direction.Down)
+                            myTanktemp.dir = EM_Direction.Down;
                         break;
                     case Keys.A:
-                        ClassCreateLogic.myTanktemp.dir = ClassMy.EM_Direction.Left;
+                        if (myTanktemp.dir != EM_Direction.Left)
+                            myTanktemp.dir = EM_Direction.Left;
                         break;
                     case Keys.D:
-                        ClassCreateLogic.myTanktemp.dir = ClassMy.EM_Direction.Right;
+                        if (myTanktemp.dir != EM_Direction.Right)
+                            /*ClassCreateLogic.*/
+                            myTanktemp.dir = /*ClassMy.*/EM_Direction.Right;
                         break;
                 }
-                ClassCreateLogic.myTanktemp.isMoving = true;
+                myTanktemp.isMoving = true;
             }
             else
             {
-                    ClassCreateLogic.myTanktemp.isMoving = false;
+                myTanktemp.isMoving = false;
             }
         }
 
@@ -141,7 +148,7 @@ namespace _06_坦克大战_正式.logic
         #region 移动检测和碰撞检测
 
         //检测物体碰撞方法
-        private static ClassWall MIsCollidedAOlist(Rectangle rta, List<ClassWall> listao)//墙列表检测，哎列表不支持父类范型改用子类泛型//静态列表对象检测逻辑
+        private static ClassWall MIsCollidedAOlist(Rectangle rta, List<ClassWall> listao)//墙列表碰撞检测，哎列表不支持父类范型改用子类泛型//静态列表对象检测逻辑
         {
             foreach (ClassWall o in listao)
             {
@@ -150,17 +157,16 @@ namespace _06_坦克大战_正式.logic
             }
             return null;
         }
-        private static ClassProp MIsCollidedAO(Rectangle rta, ClassProp ao)//道具检测//静态单个对象检测逻辑（目前就一个boss，没有其他道具）
+        private static ClassProp MIsCollidedAO(Rectangle rta, ClassProp ao)//道具碰撞检测//静态单个对象检测逻辑（目前就一个boss，没有其他道具）
         {
-            if (ao.rectangle.IntersectsWith(rta))//单个判断，以后可以改为道具列表，boss恒定0号元素即可
+            if (ao.rectangle.IntersectsWith(rta))//单个判断，以后可以改为道具列表循环判断，boss恒定0号元素即可
             {
                 return ao;
             }
                 return null;
-
         }
 
-        public static void MMoveCheck(ClassActiveObject AObject)//子弹的碰撞不在这里
+        public static void MMoveCheck(ClassActiveObject AObject)//移动碰撞检测，子弹的碰撞不在这里
         {
             //检测是否超出窗体
             if((AObject.dir==EM_Direction.Right && AObject.X > (390- AObject.Width)) //不能直接390，得减去坦克的高宽，因为坦克的坐标也在图片左上角
@@ -207,9 +213,58 @@ namespace _06_坦克大战_正式.logic
                 return;
             }
         }
-
-
         #endregion
 
+        #region 敌人的ai
+        //先实现移动
+        public static EM_Direction MenemyMoveCheck(EM_Direction dirTemp)//根据撞墙时的当前方向，转向另外三个方向，免得无效转向
+        {
+            List<EM_Direction> listdir = new List<EM_Direction> (4) { EM_Direction.Up, EM_Direction.Down, EM_Direction.Left, EM_Direction.Right };
+            listdir.Remove(dirTemp);
+            //Random ra = new Random();
+            int index = ra.Next(0, 3);
+            EM_Direction newdir = listdir[index];
+            return newdir;
+        }
+
+        public static void MEnemyAI()//遍历敌人坦克列表，改变每个敌人的位置和移动状态
+        {
+            foreach(ClassEnemy ey in listenemyTank)//移动遍历
+            {
+                MMoveCheck(ey);//先调用检测，如果撞墙了就将ismoving改为flase
+                if(ey.isMoving == false)//如果撞墙了，就换个方向
+                {
+                    //EM_Direction nowDir = ey.dir;//当前方向
+                    ey.dir = MenemyMoveCheck(ey.dir);
+                    ey.isMoving = true;
+                    #region //旧随机方向
+                    //Random ra = new Random();
+                    //int index = ra.Next(1, 5);
+                    //switch (index)
+                    //{
+                    //    case 1:
+                    //        ey.dir = EM_Direction.Up;
+                    //        break;
+                    //    case 2:
+                    //        ey.dir = EM_Direction.Down;
+                    //        break;
+                    //    case 3:
+                    //        ey.dir = EM_Direction.Left;
+                    //        break;
+                    //    case 4:
+                    //        ey.dir = EM_Direction.Right;
+                    //        break;
+                    //}
+                    //ey.isMoving = true;
+                    #endregion
+                }
+                //if (ey.isMoving == true)
+                    MMove(ey);
+            }
+            //Thread thread2 = new Thread(MEnemyAI);//想让转方向少判定点减少鬼畜大旋转，不过线程这不明白，先别乱搞了
+            //thread2.Start();
+            //Thread.Sleep(100);
+        }
+        #endregion
     }
 }

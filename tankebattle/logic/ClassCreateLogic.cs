@@ -15,13 +15,13 @@ namespace _06_坦克大战_正式.logic
 {
     internal class ClassCreateLogic : ClassBaseLogic//静态生成逻辑
     {
-        
-
+        //包括地图和角色的生成，道具的生成，各种绘图逻辑等等
+        #region create方法
         internal static void MCreateMyTank()
         {//固定生成在老巢的左边
             int xPosition = (Form1.Bttp.Width - 30) / 2 - 45;
             int yPosition = Form1.Bttp.Height - 30;
-            myTank = new ClassMy(xPosition, yPosition, 1);
+            myTank = new ClassMy(xPosition, yPosition, 2);
             myTanktemp = myTank;
         }
         public static void MCreateBoss()//现在只有一关，若是有多关每关都需要生成boss,没准一关地图比一关大呢233
@@ -68,8 +68,8 @@ namespace _06_坦克大战_正式.logic
             MCreateWall(12, 6.25, 1, 0.5, Resources.steel, liststeels);
             #endregion
         }
-
         
+
         #region//旧构造方法，只能创建4个或1个墙块，这不行，我还需要横2或竖2.我不想单独写一个方法，所以新方法引入xcount和ycount的新参数，就方法废弃
         //private static void MCreateWall(double x, double y, double count,Bitmap bt,List<ClassWall> listwall)//在指定位置竖排生成对应个数，对应类型的墙体，每个墙体由4个砖块图像组成
         //{//我只需要在1/2/3或者1.5/2.5这样的地方生成砖块即可
@@ -89,6 +89,7 @@ namespace _06_坦克大战_正式.logic
         //    }
         //}
         #endregion
+        
         private static void MCreateWall(double x, double y, double xCount , double yCount, Bitmap bt, List<ClassWall> listwall)
         {
             #region 为什么xy个数要用double？
@@ -107,6 +108,34 @@ namespace _06_坦克大战_正式.logic
                     listwall.Add(wall);
                 }
         }
+
+        public static void MCreatStart()//创建游戏开始时应用的数据
+        {
+            //敌坦克生成位置初始化
+            arraypoint1[0].X = 0;//第一个生成在0.0
+            arraypoint1[0].Y = 0;
+            arraypoint1[1].X = Form1.Bttp.Width / 2 - 13;//第二个生成在中间
+            arraypoint1[1].Y = 0;
+            arraypoint1[2].X = Form1.Bttp.Width - 30;//第三个生成在最右边//减去30避免生成在墙里
+            arraypoint1[2].Y = 0;
+
+            //敌坦克实例初始化//很烦，这会导致我只有这四个敌人重复生成，我都enemyTankTemp = new ClassEnemy();了，结果一赋值还是成引用了，哎
+            //ClassEnemy grayTank = new ClassEnemy(0, 0, 2, Resources.GrayUp, Resources.GrayDown, Resources.GrayLeft, Resources.GrayRight);
+            //ClassEnemy greenTank = new ClassEnemy(0, 0, 2, Resources.GreenUp, Resources.GreenDown, Resources.GreenLeft, Resources.GreenRight);
+            //ClassEnemy quickTank = new ClassEnemy(0, 0, 3, Resources.QuickUp, Resources.QuickDown, Resources.QuickLeft, Resources.QuickRight);
+            //ClassEnemy slowTank = new ClassEnemy(0, 0, 1, Resources.SlowRight, Resources.SlowDown, Resources.SlowLeft, Resources.SlowRight);
+            //listenemyType.Add(grayTank);
+            //listenemyType.Add(greenTank);
+            //listenemyType.Add(quickTank);
+            //listenemyType.Add(slowTank);
+            //把列表当数组用了难怪报错说超出索引，还没add呢根本就没有元素23333
+            //listenemyTank[0] = new ClassEnemy(0, 0, 2, Resources.GrayUp, Resources.GrayDown, Resources.GrayLeft, Resources.GrayRight);//灰色坦克
+            //listenemyTank[1] = new ClassEnemy(0, 0, 2, Resources.GreenUp, Resources.GreenDown, Resources.GreenLeft, Resources.GreenRight);//绿色坦克
+            //listenemyTank[2] = new ClassEnemy(0, 0, 3, Resources.QuickUp, Resources.QuickDown, Resources.QuickLeft, Resources.QuickRight);//快速坦克
+            //listenemyTank[3] = new ClassEnemy(0, 0, 1, Resources.SlowRight, Resources.SlowDown, Resources.SlowLeft, Resources.SlowRight);//慢速坦克
+        }
+        #endregion
+
         #region 把绘图方法合并到一起
         /*public static void MDrawMap()//实际画图方法，上面的是计算图形位置方法
         {
@@ -148,6 +177,7 @@ namespace _06_坦克大战_正式.logic
         }*/
         #endregion
 
+        #region draw方法
         public static void MDrawStaticObject()//绘制静态对象方法
         {
             BOSS.MDrawSelf();
@@ -164,13 +194,61 @@ namespace _06_坦克大战_正式.logic
         {
             //myTank = myTanktemp;//不需要这句，因为是引用类型，二者指向了同一个对象
             ClassShowLogic.MMoveCheck(myTanktemp);//先调用检测，如果撞墙了就将ismoving改为flase
-            if (ClassCreateLogic.myTanktemp.isMoving == true)
+            if (myTanktemp.isMoving == true)
                ClassShowLogic.MMove(myTanktemp);
             myTank.MDrawSelf();
 
-
+            //绘制敌人坦克
+            //bool temp = MEnemyTankBorn();//先调用，随机生成敌方坦克，决定好位置和种类
+            //ClassEnemy enemyTankTemp =  MEnemyTankBorn();
+            //if (enemyTankTemp != null)
+            //    MEnemyBorn(enemyTankTemp);
+            MEnemyTankBorn();
+            ClassShowLogic.MEnemyAI();//调用敌人ai改变敌人位置和移动状态
+            foreach (ClassEnemy ey in listenemyTank)
+                ey.MDrawSelf();
         }
+        #endregion
 
+        public static void MEnemyBorn(ClassEnemy enemyTemp)//生成敌人坦克
+        {
+            //Random rt1 = new Random();
+            int index = ra.Next(0, 3);//随机生成0-3（不包括3）的整数，即敌人出生地点坐标的索引
+            Point bornPoint = arraypoint1[index];//当前随机到的出生地点
+            enemyTemp.X = bornPoint.X; 
+            enemyTemp.Y = bornPoint.Y;
+            listenemyTank.Add(enemyTemp);
+        }
+        public static void/*ClassEnemy*/ MEnemyTankBorn()
+        {
+            if (enemyBornCount < 181)
+                enemyBornCount++;
+            if (enemyBornCount < enemyBornSpeed || enemyBornNow > enemyBornMax) return /*null*/;//如果生成计数器小于生成速度，则以后代码不执行
+            //Random rt2 = new Random();
+            int enemytype = ra.Next(0,4);//随机生成敌人的种类
+            ClassEnemy enemyTankTemp = new ClassEnemy();//根据种类生成一个敌人
+            //enemyTankTemp = listenemyType[enemytype];//根据种类生成一个敌人
+            switch (enemytype)
+            {
+                case 0:
+                    enemyTankTemp = new ClassEnemy(0, 0, 2, Resources.GrayUp, Resources.GrayDown, Resources.GrayLeft, Resources.GrayRight);
+                    break;
+                case 1:
+                    enemyTankTemp = new ClassEnemy(0, 0, 2, Resources.GreenUp, Resources.GreenDown, Resources.GreenLeft, Resources.GreenRight);
+                    break;
+                case 2:
+                    enemyTankTemp = new ClassEnemy(0, 0, 3, Resources.QuickUp, Resources.QuickDown, Resources.QuickLeft, Resources.QuickRight);
+                    break;
+                case 3:
+                    enemyTankTemp = new ClassEnemy(0, 0, 1, Resources.SlowUp, Resources.SlowDown, Resources.SlowLeft, Resources.SlowRight);
+                    break;
+            }
+            enemyBornCount = 0;//生成一个敌人后，计数器归零
+            enemyBornNow++;//敌人计数器+1
+            MEnemyBorn(enemyTankTemp);
+            return;
+            //return enemyTankTemp;
+        }
 
     }
 }
