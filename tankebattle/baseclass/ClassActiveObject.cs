@@ -26,6 +26,7 @@ namespace _06_坦克大战_正式.baseclass
         //（那么搞纯属多余了，无效操作233）
         public bool isMoving = false;
         public int speed { get; set; }
+        public EM_Tag tag { get; set; }
 
         public Bitmap bitmapUp { get; set; }
         public Bitmap bitmapDown { get; set; }
@@ -35,6 +36,11 @@ namespace _06_坦克大战_正式.baseclass
         public enum EM_Direction
         {
             Up, Down, Left, Right
+        }
+
+        public enum EM_Tag
+        {
+            myTank,enemyTank
         }
         public ClassActiveObject() : base()
         {
@@ -56,7 +62,7 @@ namespace _06_坦克大战_正式.baseclass
             
 
         protected override Bitmap MGetBitmap()
-        {//根据朝向返回位图，应为子弹等图片不是png有黑色背景，所以不能直接返回，需要先设置透明度
+        {//根据朝向返回位图，因为子弹等图片不是png有黑色背景，所以不能直接返回，需要先设置透明度
             Bitmap bitmap = null;
             switch (dir)
             {

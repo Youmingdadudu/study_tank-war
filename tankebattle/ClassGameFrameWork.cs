@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 
 namespace _06_坦克大战_正式
 {
+    //灵感
     //难度不同：敌人的生成速度，生命值，速度啥的
+    //如果我把碰撞检测时用到的临时xy，和临时矩形，都直接放在对应类里，在生成时直接计算（子弹类直接不用改了，坦克只要每次触发转弯事件时候变一下即可），这样就不用每次遍历都重新计算了，会不会减少计算量呢？
     internal class ClassGameFrameWork
     {
         #region 游戏框架类设计
@@ -21,6 +23,7 @@ namespace _06_坦克大战_正式
         #endregion
 
         public static Graphics frameGraphics;//引用绘制元素的画布的全局静态变量
+        private static object _lock = new object();
 
         public static void MStart()
         {//frameGraphics.Clear(Color.Black);不行，只渲染一次，这个效果不是持久的将背景设置呈黑色，仅限于当前，重新渲染就没了
@@ -42,7 +45,11 @@ namespace _06_坦克大战_正式
 
             //以下为动态方法
             //ClassShowLogic.MMoveDraw();
-            
+            lock (_lock)
+            {
+                ClassShowLogic.MBulletControl();//将子弹的控制从动态绘制里移出来不集中了。因为这不仅是绘制还有移动和碰撞啥的，是动态的就放在这了
+            }
+            ClassShowLogic.MDestroy();//销毁方法，因为改变了列表所以要放在所有用到列表循环的方法的最下面
         }
         public static void MEnd()
         {

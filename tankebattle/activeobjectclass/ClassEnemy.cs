@@ -11,6 +11,7 @@ namespace _06_坦克大战_正式.activeobjectclass
 {
     internal class ClassEnemy : ClassActiveObject
     {
+        public int attackCounter = 0;//攻击计数器
         public ClassEnemy()
         {
 
@@ -26,6 +27,7 @@ namespace _06_坦克大战_正式.activeobjectclass
             bitmapRight = bit4;
             this.dir = EM_Direction.Down;
             isMoving = true;//敌人得默认就行动，不然没法启动
+            this.tag= EM_Tag.enemyTank;
         }
         //public ClassEnemy(Point a, int spead,Bitmap bt1, Bitmap bit2, Bitmap bit3, Bitmap bit4) : base(a.X, a.Y,spead, bt1, bit2, bit3, bit4)
         //{

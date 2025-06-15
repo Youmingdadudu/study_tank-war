@@ -20,6 +20,8 @@ namespace _06_坦克大战_正式.activeobjectclass
             bitmapDown = Resources.MyTankDown;
             bitmapLeft = Resources.MyTankLeft;
             bitmapRight = Resources.MyTankRight;
+            this.tag = EM_Tag.myTank;
+            this.isHave = true;
         }
     }
 }

@@ -31,6 +31,7 @@ namespace _06_坦克大战_正式.logic
             double x1 = (xPasition - 15) / 30, x2 = (xPasition + 30) / 30;
             double y1 = yPasition / 30, y2 = (yPasition -15) / 30;
             BOSS = new ClassProp((int)xPasition, (int)yPasition , Resources.Boss);
+            BOSS.isHave = true;
             //生成基地防御砖墙
             MCreateWall(x1, y1, 0.5, 1, Resources.wall, listwalls);
             MCreateWall(x1, y2, 2, 0.5, Resources.wall, listwalls);
@@ -178,9 +179,10 @@ namespace _06_坦克大战_正式.logic
         #endregion
 
         #region draw方法
-        public static void MDrawStaticObject()//绘制静态对象方法
+        public static void MDrawStaticObject()//绘制静态对象方法集合
         {
-            BOSS.MDrawSelf();
+            if (BOSS != null/*BOSS.isHave == true*/)
+                BOSS.MDrawSelf();
             //foreach (ClassWall wl in listwallsBoss)
             //    wl.MDrawSelf();
             foreach (ClassWall wall in listwalls)
@@ -190,13 +192,16 @@ namespace _06_坦克大战_正式.logic
         }
 
         
-        public static void MDrawActiveObject()//绘制动态对象方法
+        public static void MDrawActiveObject()//绘制动态对象方法集合
         {
             //myTank = myTanktemp;//不需要这句，因为是引用类型，二者指向了同一个对象
-            ClassShowLogic.MMoveCheck(myTanktemp);//先调用检测，如果撞墙了就将ismoving改为flase
-            if (myTanktemp.isMoving == true)
-               ClassShowLogic.MMove(myTanktemp);
-            myTank.MDrawSelf();
+            if(myTank != null)
+            {
+                ClassShowLogic.MMoveCheck(myTanktemp);//先调用检测，如果撞墙了就将ismoving改为flase
+                if (myTanktemp.isMoving == true)
+                    ClassShowLogic.MMove(myTanktemp);
+                myTank.MDrawSelf();
+            }
 
             //绘制敌人坦克
             //bool temp = MEnemyTankBorn();//先调用，随机生成敌方坦克，决定好位置和种类
@@ -207,6 +212,11 @@ namespace _06_坦克大战_正式.logic
             ClassShowLogic.MEnemyAI();//调用敌人ai改变敌人位置和移动状态
             foreach (ClassEnemy ey in listenemyTank)
                 ey.MDrawSelf();
+
+            //lock (_lock)
+            //{
+            //    ClassShowLogic.MBulletControl();
+            //}
         }
         #endregion
 
@@ -221,9 +231,9 @@ namespace _06_坦克大战_正式.logic
         }
         public static void/*ClassEnemy*/ MEnemyTankBorn()
         {
-            if (enemyBornCount < 181)
+            if (enemyBornCount < enemyBornSpeed)
                 enemyBornCount++;
-            if (enemyBornCount < enemyBornSpeed || enemyBornNow > enemyBornMax) return /*null*/;//如果生成计数器小于生成速度，则以后代码不执行
+            if (enemyBornCount < enemyBornSpeed || enemyBornNow > enemyBornMax) return /*null*/;//如果生成计数器小于生成速度或者当前坦克数量大于最多敌人数量，则以后代码不执行
             //Random rt2 = new Random();
             int enemytype = ra.Next(0,4);//随机生成敌人的种类
             ClassEnemy enemyTankTemp = new ClassEnemy();//根据种类生成一个敌人

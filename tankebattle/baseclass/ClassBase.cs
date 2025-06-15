@@ -21,6 +21,8 @@ namespace _06_坦克大战_正式.baseclass
                 return new Rectangle(X, Y, Width, Height);
             }
         }
+
+        public bool isHave {  get; set; }//判断物体是否还存在的属性，用于判断销毁。还是老师的办法简单方便233
         protected abstract Bitmap MGetBitmap();
         protected ClassBase()
         {

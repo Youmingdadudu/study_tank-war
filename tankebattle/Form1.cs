@@ -92,12 +92,12 @@ namespace _06_坦克大战_正式
         private void Form1_KeyDown(object sender, KeyEventArgs e)//某个键按下时触发
         {
             sender = "Down";
-            ClassShowLogic.MMovePosition(sender, e);
+            ClassShowLogic.MPlayerControl(sender, e);
         }
         private void Form1_KeyUp(object sender, KeyEventArgs e)//某个键松开时触发
         {
             sender = "Up";
-            ClassShowLogic.MMovePosition(sender, e);
+            ClassShowLogic.MPlayerControl(sender, e);
         }
 
     }
