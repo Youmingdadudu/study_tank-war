@@ -123,8 +123,11 @@ namespace _06_坦克大战_正式.logic
                     case Keys.Space://升级为控制方法，不只是移动，还有开火控制
                         lock (_lock)
                         {
-                            if(myTank != null)
-                            MCreateBullet(myTank.X, myTank.Y, 5, myTank.Width, myTank.Height, myTank.dir, EM_Tag.myTank);
+                            if (myTank != null)
+                            {
+                                ClassSoundMananger.MMusicFire();
+                                MCreateBullet(myTank.X, myTank.Y, 5, myTank.Width, myTank.Height, myTank.dir, EM_Tag.myTank);
+                            }
                         }
                         break;
                 }
@@ -186,6 +189,7 @@ namespace _06_坦克大战_正式.logic
                     if (ao.rectangle.IntersectsWith(rta))
                     {
                         //enemyBornNow--;//如果想要消灭后一直生成坦克就需要让集合计数器-1
+                        ClassSoundMananger.MMusicHit();
                         return ao;
                     } 
                 }
@@ -195,6 +199,7 @@ namespace _06_坦克大战_正式.logic
                 if (myTank.rectangle.IntersectsWith(rta))
                 {
                     myTank.isHave = false;
+                    ClassSoundMananger.MMusicHit();
                     ClassEnemy classEnemy = new ClassEnemy();//用于触发爆炸特效的临时坦克。因为代码原因不能直接返回mytank。幸好我有先见之明早早做了无参构造方法备着2333
                     return classEnemy;
                 }
@@ -337,33 +342,35 @@ namespace _06_坦克大战_正式.logic
                 MCreateExplsion(xPosition, yPosition);
                 AObject.isMoving = false; return;
             }
-            if (BOSS != null && BOSS.rectangle.IntersectsWith(rtaTemp) == true)
+            if (/*BOSS != null &&*/ /*BOSS.isHave = true &&*/ BOSS.rectangle.IntersectsWith(rtaTemp) == true)
             {
                 BOSS.isHave = false;//想想还是不行，道具和boss完全不一样，算了还是把boss单拎出来特殊对待吧！//还是现在就改吧顺便把道具列表也整出来233//暂时就一个物品boss，先这样以后再改
+                //BOSS.rectangle= null;//早知道不设置成只读了懒得改了233
+                BOSS.Width = 0;
+                BOSS.Height = 0;
+                ClassGameFrameWork.gameState = EM_GameState.gameOver;//基地寄了游戏也结束了
                 AObject.isMoving = false;
                 MCreateExplsion(xPosition, yPosition);
                 return;
             }
-            //if (MIsCollidedSO(rtaTemp, BOSS) != null)
+            //if (MIsCollidedSO(rtaTemp, BOSS) != null)//道具列表检测
             //{
             //    AObject.isMoving = false; return;
             //}
-            //检测是否碰到坦克
-            ClassEnemy tempEY = MIsCollidedBullet(AObject, rtaTemp);
-            if(MIsCollidedBullet(AObject,rtaTemp) != null)
+           
+            ClassEnemy tempEY = MIsCollidedBullet(AObject, rtaTemp); //检测是否碰到坦克
+            if (MIsCollidedBullet(AObject,rtaTemp) != null)
             {
                 AObject.isMoving = false;
                 MCreateExplsion(xPosition, yPosition);
                 listdestroyTank.Add(tempEY);
             }
         }
-
-
         #endregion
 
         #region 敌人的ai
         //先实现移动
-        public static EM_Direction MEnemyMoveCheck(EM_Direction dirTemp)//相当于随即转向，不改了直接用就行//根据撞墙时的当前方向，转向另外三个方向，免得无效转向
+        public static EM_Direction MEnemyMoveCheck(EM_Direction dirTemp)//相当于随机转向，不改了直接用就行//根据撞墙时的当前方向，转向另外三个方向，免得无效转向
         {
             List<EM_Direction> listdir = new List<EM_Direction> (4) { EM_Direction.Up, EM_Direction.Down, EM_Direction.Left, EM_Direction.Right };
             listdir.Remove(dirTemp);
@@ -417,21 +424,20 @@ namespace _06_坦克大战_正式.logic
 
         private static void MEnemyAttack(ClassEnemy ey)//敌人攻击方法
         {
-            if (ey.attackCounter < enemyAttackMax)
-            {
-                ey.attackCounter++; return;
-            }
+            ey.attackCounter++;
+            if (ey.attackCounter < enemyAttackMax) return;
             //else if (ey.attackCounter > enemyAttackMax)//绷不住了，问了ds原来问题这么简单（我这个逻辑没有判定二者相等的时候我给忘了完全没注意没想起来2333），这叫啥，知见障灯下黑转不过弯来？挠头啥词来着2333
             //{(ey.attackCounter == enemyAttackMax)应该这么写逻辑，不过实际上不用写，因为就两种情况要么不满足要么开火，既然上面不满足就return那这里就不用判定了233
             lock (_lock)
             {
+                ClassSoundMananger.MMusicFire();
                 MCreateBullet(ey.X, ey.Y, enemyBulletSpeed, ey.Width, ey.Height, ey.dir, EM_Tag.enemyTank);
             }
             ey.attackCounter = 0;//发射子弹后计数器归零
             //}
         }
         
-        private static void MEneryAutoChangeDir(ClassEnemy ey)
+        private static void MEneryAutoChangeDir(ClassEnemy ey)//随即拐弯方法
         {
             ey.ChangeDirCount++;
             if (ey.ChangeDirCount < ey.ChangeDirSpeed) return;
@@ -524,16 +530,15 @@ namespace _06_坦克大战_正式.logic
         }
 
         //玩家子弹控制//不用了，直接将移动控制升级了，在那里就行
-        //ai子弹逻辑
-
+        //ai子弹逻辑//也不用了，一个攻击方法生成子弹，然后交给通用子弹控制就成了
         #endregion
 
         #region //物品销毁逻辑
         public static void MDestroy()//销毁方法//和老师学碰撞和销毁合并？先不搞，如果大修了再说
         {
-            if(BOSS != null && BOSS.isHave == false)//my坦克和boss应该执行游戏结束方法，不过目前还没有先拿这个顶一顶，先让图片没了再说
+            if(/*BOSS != null && */BOSS.isHave == false)//my坦克和boss应该执行游戏结束方法，不过目前还没有先拿这个顶一顶，先让图片没了再说
             {
-                BOSS = null;
+                //BOSS = null;//既然要完善结束方法，那boss所有的空判定都不用了，直接用ishave就行
             }
             if(myTank != null && myTank.isHave == false)//发射子弹，绘图，碰撞检测都额外加了条件。其实感觉没必要，因为游戏已经结束了
             {
@@ -565,6 +570,7 @@ namespace _06_坦克大战_正式.logic
         #region //爆炸特效逻辑
         public static void MCreateExplsion(int x, int y)
         {
+            ClassSoundMananger.MMusicBlast();
             ClassAct newExplsion = new ClassAct(x,y,0,3);
             listexplsion.Add(newExplsion);
         }

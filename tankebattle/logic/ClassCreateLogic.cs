@@ -181,7 +181,7 @@ namespace _06_坦克大战_正式.logic
         #region draw方法
         public static void MDrawStaticObject()//绘制静态对象方法集合
         {
-            if (BOSS != null/*BOSS.isHave == true*/)
+            if (/*BOSS != null*/BOSS.isHave == true)
                 BOSS.MDrawSelf();
             //foreach (ClassWall wl in listwallsBoss)
             //    wl.MDrawSelf();
@@ -226,6 +226,7 @@ namespace _06_坦克大战_正式.logic
         {
             //Random rt1 = new Random();
             int index = ra.Next(0, 3);//随机生成0-3（不包括3）的整数，即敌人出生地点坐标的索引
+            ClassSoundMananger.MMusicAdd();
             Point bornPoint = arraypoint1[index];//当前随机到的出生地点
             enemyTemp.X = bornPoint.X; 
             enemyTemp.Y = bornPoint.Y;
@@ -260,6 +261,15 @@ namespace _06_坦克大战_正式.logic
             MEnemyBorn(enemyTankTemp);
             return;
             //return enemyTankTemp;
+        }
+
+        public static void MGameOver()
+        {
+            Graphics myGra = ClassGameFrameWork.frameGraphics;//在游戏画面上绘画自身
+            Bitmap gameOverBIT = Resources.GameOver;
+            int x = Form1.Bttp.Width / 2 - gameOverBIT.Width/2;
+            int y = Form1.Bttp.Height / 2 - gameOverBIT.Height/2;
+            myGra.DrawImage(gameOverBIT, x, y);//处理坐标，让游戏结束图片出现在正中央
         }
 
     }

@@ -14,6 +14,7 @@ namespace _06_坦克大战_正式.staticbojectclass
         //private string propHp;//道具生命值//这些属性暂时没意义233
         public ClassProp(int x, int y, Bitmap bt) : base(x, y, bt)
         {
+            this.isHave = true;
         }
     }
 }

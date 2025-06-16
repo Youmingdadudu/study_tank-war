@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace _06_坦克大战_正式
 {
     //灵感
-    //难度不同：敌人的生成速度，双方生命值，速度啥的//弹药数量，发射速度，子弹伤害和飞行速度
+    //难度不同：敌人的生成速度，双方生命值，速度啥的//弹药数量，发射速度，子弹伤害和飞行速度//记录死亡次数，分数，运行时间，消灭敌人等等
     //如果我把碰撞检测时用到的临时xy，和临时矩形，都直接放在对应类里，在生成时直接计算（子弹类直接不用改了，坦克只要每次触发转弯事件时候变一下即可），这样就不用每次遍历都重新计算了，会不会减少计算量呢？
     
     enum EM_GameState
@@ -39,6 +39,9 @@ namespace _06_坦克大战_正式
             ClassCreateLogic.MCreateMyTank();
 
             ClassCreateLogic.MCreatStart();//创建敌人和道具等元素的信息
+
+            ClassSoundMananger.initSound();
+            ClassSoundMananger.MMusicStart();//播放开始音乐
         }
         //if(gameState == )//这儿不能用if，挠头，那我在from里改吧，正好也方便
         public static void MUpdate()
@@ -61,7 +64,7 @@ namespace _06_坦克大战_正式
         }
         public static void MEnd()
         {
-
+            ClassCreateLogic.MGameOver();//基地完蛋了就调用gameover方法
         }
     }
 }

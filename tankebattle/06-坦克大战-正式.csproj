@@ -81,6 +81,7 @@
     <Compile Include="baseclass\ClassBase.cs" />
     <Compile Include="baseclass\ClassStaticObject.cs" />
     <Compile Include="ClassGameFrameWork.cs" />
+    <Compile Include="ClassSoundMananger.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
