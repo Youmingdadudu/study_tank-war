@@ -50,13 +50,20 @@ namespace _06_坦克大战_正式
             while (true)
             {
                 ClassGameFrameWork.frameGraphics.Clear(Color.Black);//每一帧都清除然后刷新成黑色
-                ClassGameFrameWork.MUpdate();
-                graphicsMain.DrawImage(bitmaptemp, 0, 0);
+                if(ClassGameFrameWork.gameState == EM_GameState.running)//如果是运行中，就调用这个方法
+                {
+                    ClassGameFrameWork.MUpdate();
+                    graphicsMain.DrawImage(bitmaptemp, 0, 0);
 
-                Thread.Sleep(threadSleepTime);
+                    Thread.Sleep(threadSleepTime);
+                }
+                else if(ClassGameFrameWork.gameState == EM_GameState.gameOver)
+                {
+                    ClassGameFrameWork.MEnd();
+                }
             }
 
-            ClassGameFrameWork.MEnd();
+            //ClassGameFrameWork.MEnd();//原本的构想破灭，不能在这儿了
         }
         //private void Form1_Paint(object sender, PaintEventArgs e)
         //{

@@ -193,8 +193,12 @@ namespace _06_坦克大战_正式.logic
             else if (myTank != null && bullet.tag == EM_Tag.enemyTank)
             {
                 if (myTank.rectangle.IntersectsWith(rta))
+                {
                     myTank.isHave = false;
-                    //return myTank;
+                    ClassEnemy classEnemy = new ClassEnemy();//用于触发爆炸特效的临时坦克。因为代码原因不能直接返回mytank。幸好我有先见之明早早做了无参构造方法备着2333
+                    return classEnemy;
+                }
+                    
             }
             return null;
         }
@@ -277,6 +281,8 @@ namespace _06_坦克大战_正式.logic
         {
             int x = AObject.X /*- AObject.Width / 2*/;//不对，蒙了，原因应该是不需要在这里改，而且虽然构造改了，但生成方法又让子弹出现在坦克中间了//不用了，我想起了我在classshow里已经处理了，现在相当于子弹的图形在左上角了
             int y = AObject.Y /*- AObject.Height / 2*/;
+            int xPosition = AObject.X + AObject.Width / 2;//用于爆炸特效的坐标，让爆炸中心点在子弹图片的中心点也就是子弹的位置上
+            int yPosition = AObject.Y + AObject.Height / 2;
             Rectangle rtaTemp = new Rectangle();
             rtaTemp = AObject.rectangle;
             //矩形处理，让矩形只有中间子弹那么大//因为矩形是只读属性，不能直接在子弹类里改
@@ -286,6 +292,7 @@ namespace _06_坦克大战_正式.logic
             rtaTemp.Height = 5;
             //rtaTemp.Width = rtaTemp.Width - 18;//看老师的操作恍然大悟，我干嘛算啊直接给数值不就得了这又不是不能直接修改2333
             //rtaTemp.Height = rtaTemp.Height - 18;
+
 
             //因为子弹的独特性质（子弹在图片中心xy在左上角），检测是否超出窗体和碰撞，都需要每个方向单独修改,判定用的xy的值（但不能直接修改，这让就让子弹乱飞了）
             switch (AObject.dir)
@@ -321,17 +328,20 @@ namespace _06_坦克大战_正式.logic
             if (tempWL != null)
             {
                 listdestroyWall.Add(tempWL);
+                MCreateExplsion(xPosition, yPosition);//如果撞到墙了，就创建一个爆炸效果。创建和绘制是分开的，这里只管创建
                 //listwalls.Remove(tempWL);
                 AObject.isMoving = false; return;//碰到一个墙后续就不需要检测了
             }
             if (MIsCollidedWalllist(rtaTemp, liststeels) != null)
             {
+                MCreateExplsion(xPosition, yPosition);
                 AObject.isMoving = false; return;
             }
             if (BOSS != null && BOSS.rectangle.IntersectsWith(rtaTemp) == true)
             {
                 BOSS.isHave = false;//想想还是不行，道具和boss完全不一样，算了还是把boss单拎出来特殊对待吧！//还是现在就改吧顺便把道具列表也整出来233//暂时就一个物品boss，先这样以后再改
                 AObject.isMoving = false;
+                MCreateExplsion(xPosition, yPosition);
                 return;
             }
             //if (MIsCollidedSO(rtaTemp, BOSS) != null)
@@ -342,6 +352,8 @@ namespace _06_坦克大战_正式.logic
             ClassEnemy tempEY = MIsCollidedBullet(AObject, rtaTemp);
             if(MIsCollidedBullet(AObject,rtaTemp) != null)
             {
+                AObject.isMoving = false;
+                MCreateExplsion(xPosition, yPosition);
                 listdestroyTank.Add(tempEY);
             }
         }
@@ -351,7 +363,7 @@ namespace _06_坦克大战_正式.logic
 
         #region 敌人的ai
         //先实现移动
-        public static EM_Direction MenemyMoveCheck(EM_Direction dirTemp)//根据撞墙时的当前方向，转向另外三个方向，免得无效转向
+        public static EM_Direction MEnemyMoveCheck(EM_Direction dirTemp)//相当于随即转向，不改了直接用就行//根据撞墙时的当前方向，转向另外三个方向，免得无效转向
         {
             List<EM_Direction> listdir = new List<EM_Direction> (4) { EM_Direction.Up, EM_Direction.Down, EM_Direction.Left, EM_Direction.Right };
             listdir.Remove(dirTemp);
@@ -366,10 +378,11 @@ namespace _06_坦克大战_正式.logic
             foreach(ClassEnemy ey in listenemyTank)//移动遍历
             {
                 MMoveCheck(ey);//先调用检测，如果撞墙了就将ismoving改为flase
-                if(ey.isMoving == false)//如果撞墙了，就换个方向
+                MEneryAutoChangeDir(ey);//随即转向方法，让ai更灵活多变
+                if (ey.isMoving == false)//如果撞墙了，就换个方向
                 {
                     //EM_Direction nowDir = ey.dir;//当前方向
-                    ey.dir = MenemyMoveCheck(ey.dir);
+                    ey.dir = MEnemyMoveCheck(ey.dir);//话说可不可以用转向计数器呢，一次循环最多转向4次啥的？嗯，感觉有可行性
                     ey.isMoving = true;
                     #region //旧随机方向
                     //Random ra = new Random();
@@ -398,11 +411,11 @@ namespace _06_坦克大战_正式.logic
                 MEnemyAttack(ey);//移动之后攻击//麻了，为什么不发子弹啊，明明里面的创造子弹没错啊，条件也没错啊//解决了，确实错了，不过是逻辑错了，难崩，乐
             }
             //Thread thread2 = new Thread(MEnemyAI);//想让转方向少判定点减少鬼畜大旋转，不过线程这不明白，先别乱搞了
-            //thread2.Start();//话说可不可以用转向计数器呢，一次循环最多转向4次啥的？嗯，感觉有可行性
+            //thread2.Start();
             //Thread.Sleep(100);
         }
 
-        public static void MEnemyAttack(ClassEnemy ey)//敌人攻击方法
+        private static void MEnemyAttack(ClassEnemy ey)//敌人攻击方法
         {
             if (ey.attackCounter < enemyAttackMax)
             {
@@ -417,6 +430,15 @@ namespace _06_坦克大战_正式.logic
             ey.attackCounter = 0;//发射子弹后计数器归零
             //}
         }
+        
+        private static void MEneryAutoChangeDir(ClassEnemy ey)
+        {
+            ey.ChangeDirCount++;
+            if (ey.ChangeDirCount < ey.ChangeDirSpeed) return;
+            ey.dir = MEnemyMoveCheck(ey.dir);
+            ey.ChangeDirCount = 0;
+        }
+
         #endregion
 
         #region 通用子弹生成，玩家子弹控制（空格），ai子弹逻辑
@@ -530,7 +552,33 @@ namespace _06_坦克大战_正式.logic
             {
                 listenemyTank.Remove(ey);
             }
+            foreach (ClassAct at in listdestroyExplsion)
+            {
+                if (at.playcount == at.playtime)//如果这个爆炸效果结束了（计数器满了），就销毁了
+                {
+                    listexplsion.Remove(at);
+                }
+            }
+        }
+        #endregion
 
+        #region //爆炸特效逻辑
+        public static void MCreateExplsion(int x, int y)
+        {
+            ClassAct newExplsion = new ClassAct(x,y,0,3);
+            listexplsion.Add(newExplsion);
+        }
+        public static void MExplsionControl()
+        {
+            foreach (ClassAct at in listexplsion)
+            {
+                if (at.playcount < at.playtime)//如果绘制计数器没满，就根据设定绘图
+                    at.MDrawSelf();
+                else//如果满了，就加到移除名单里等待销毁
+                {
+                    listdestroyExplsion.Remove(at);
+                }
+            }
         }
         #endregion
     }

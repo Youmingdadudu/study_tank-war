@@ -189,6 +189,8 @@ namespace _06_坦克大战_正式.logic
                 wall.MDrawSelf();
             foreach (ClassWall steel in liststeels)
                 steel.MDrawSelf();
+            //爆炸特效的绘制和移除
+            ClassShowLogic.MExplsionControl();
         }
 
         
@@ -241,16 +243,16 @@ namespace _06_坦克大战_正式.logic
             switch (enemytype)
             {
                 case 0:
-                    enemyTankTemp = new ClassEnemy(0, 0, 2, Resources.GrayUp, Resources.GrayDown, Resources.GrayLeft, Resources.GrayRight);
+                    enemyTankTemp = new ClassEnemy(0, 0, 2,180, Resources.GrayUp, Resources.GrayDown, Resources.GrayLeft, Resources.GrayRight);
                     break;
                 case 1:
-                    enemyTankTemp = new ClassEnemy(0, 0, 2, Resources.GreenUp, Resources.GreenDown, Resources.GreenLeft, Resources.GreenRight);
+                    enemyTankTemp = new ClassEnemy(0, 0, 2, 180, Resources.GreenUp, Resources.GreenDown, Resources.GreenLeft, Resources.GreenRight);
                     break;
                 case 2:
-                    enemyTankTemp = new ClassEnemy(0, 0, 3, Resources.QuickUp, Resources.QuickDown, Resources.QuickLeft, Resources.QuickRight);
+                    enemyTankTemp = new ClassEnemy(0, 0, 3, 180, Resources.QuickUp, Resources.QuickDown, Resources.QuickLeft, Resources.QuickRight);
                     break;
                 case 3:
-                    enemyTankTemp = new ClassEnemy(0, 0, 1, Resources.SlowUp, Resources.SlowDown, Resources.SlowLeft, Resources.SlowRight);
+                    enemyTankTemp = new ClassEnemy(0, 0, 1, 180, Resources.SlowUp, Resources.SlowDown, Resources.SlowLeft, Resources.SlowRight);
                     break;
             }
             enemyBornCount = 0;//生成一个敌人后，计数器归零

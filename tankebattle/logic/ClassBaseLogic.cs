@@ -44,5 +44,7 @@ namespace _06_坦克大战_正式.logic
         //protected static List<ClassProp> listdestroyProp = new List<ClassProp>();//销毁物品列表
         //protected static List<ClassActiveObject> listdestroyShow = new List<ClassActiveObject>();//销毁动态物品列表
         protected static List<ClassEnemy> listdestroyTank = new List<ClassEnemy>();//销毁坦克列表
+        protected static List<ClassAct> listexplsion = new List<ClassAct>();//爆炸特效列表，用来绘制//和销毁
+        protected static List<ClassAct> listdestroyExplsion = new List<ClassAct>();//销毁爆炸特效列表，因为foreach的特性不能直接修改正在遍历的列表
     }
 }

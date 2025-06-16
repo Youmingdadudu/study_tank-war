@@ -10,8 +10,13 @@ using System.Threading.Tasks;
 namespace _06_坦克大战_正式
 {
     //灵感
-    //难度不同：敌人的生成速度，生命值，速度啥的
+    //难度不同：敌人的生成速度，双方生命值，速度啥的//弹药数量，发射速度，子弹伤害和飞行速度
     //如果我把碰撞检测时用到的临时xy，和临时矩形，都直接放在对应类里，在生成时直接计算（子弹类直接不用改了，坦克只要每次触发转弯事件时候变一下即可），这样就不用每次遍历都重新计算了，会不会减少计算量呢？
+    
+    enum EM_GameState
+    {
+        start,running,gameOver
+    }
     internal class ClassGameFrameWork
     {
         #region 游戏框架类设计
@@ -24,15 +29,18 @@ namespace _06_坦克大战_正式
 
         public static Graphics frameGraphics;//引用绘制元素的画布的全局静态变量
         private static object _lock = new object();
+        public static EM_GameState gameState;
 
         public static void MStart()
         {//frameGraphics.Clear(Color.Black);不行，只渲染一次，这个效果不是持久的将背景设置呈黑色，仅限于当前，重新渲染就没了
+            gameState = EM_GameState.running;
             ClassCreateLogic.MCreateBoss();//开始时传递一次boss位置数据
             ClassCreateLogic.MCreateMap();//开始方法传递一次地图绘制数据
             ClassCreateLogic.MCreateMyTank();
 
             ClassCreateLogic.MCreatStart();//创建敌人和道具等元素的信息
         }
+        //if(gameState == )//这儿不能用if，挠头，那我在from里改吧，正好也方便
         public static void MUpdate()
         {
             //ClassProp.MDrawSelf();//需要创建一个道具生成方法，随机生成道具再里面调用MD方法，现在我只需要把BOSS（老家）整出来就行

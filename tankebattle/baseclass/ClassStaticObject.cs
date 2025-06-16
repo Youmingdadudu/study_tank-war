@@ -16,6 +16,9 @@ namespace _06_坦克大战_正式.baseclass
             return bitmap;
         }
 
+        public ClassStaticObject() //无参构造
+        {
+        }
         public ClassStaticObject(int x, int y ,Bitmap bt) : base(x,y) //基础构造函数,包括静态游戏元素的图片，位置
         {
             this.X = x;
