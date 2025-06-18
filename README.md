@@ -2,9 +2,9 @@
 C#学习，坦克大战小游戏案例
 # 🚀 坦克大战游戏 (Tank Battle)
 一个使用 C# Windows Forms 开发的经典坦克大战游戏复刻版。玩家控制坦克在战场上击败敌方坦克，保护基地。
-学习课程来源：siki学院C#基础教程坦克大战
-官网位置：https://www.sikiedu.com
-bilibili课程位置：https://www.bilibili.com/video/BV1KY4y157sC/?spm_id_from=333.1387.collection.video_card.click
+- 学习课程来源：siki学院C#基础教程坦克大战
+- 官网位置：https://www.sikiedu.com
+- bilibili课程位置：https://www.bilibili.com/video/BV1KY4y157sC/?spm_id_from=333.1387.collection.video_card.click
 
 ## ✨ 功能特点
 - 玩家坦克移动与射击
