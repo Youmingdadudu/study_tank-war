@@ -19,6 +19,9 @@ namespace _06_坦克大战_正式
         private Graphics graphicsTemp;
         private static Bitmap bitmaptemp = new Bitmap(390, 390);
         public static Bitmap Bttp = bitmaptemp;
+
+        private ClassGameFrameWork gameFramework; // 添加游戏框架实例
+        private volatile static bool isRunning = true;   // 控制主游戏循环的标志
         public Form1()
         {
             InitializeComponent();
@@ -27,6 +30,8 @@ namespace _06_坦克大战_正式
 
             graphicsMain = this.CreateGraphics();
             graphicsTemp = Graphics.FromImage(bitmaptemp);
+
+            gameFramework = new ClassGameFrameWork();
 
             ClassGameFrameWork.frameGraphics = graphicsTemp;//通过全局静态变量访问同一个画布，不然会很麻烦
             //将每一帧的图像现在temp上画好了，在给main，用双缓冲避免画面闪烁
@@ -48,7 +53,7 @@ namespace _06_坦克大战_正式
             ClassGameFrameWork.MStart();
 
             int threadSleepTime = 1000 / 60;//sleep方法只支持int类型,所以不能用浮点类型
-            while (true)
+            while (isRunning)
             {
                 ClassGameFrameWork.frameGraphics.Clear(Color.Black);//每一帧都清除然后刷新成黑色
                 if (ClassGameFrameWork.gameState == EM_GameState.running)//如果是运行中，就调用这个方法
@@ -75,7 +80,36 @@ namespace _06_坦克大战_正式
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            thread1.Abort();
+            // 停止主游戏循环
+            isRunning = false;
+
+            // 等待主线程完成当前循环
+            if (thread1 != null && thread1.IsAlive)
+            {
+                // 给予线程最多1秒钟完成当前操作
+                if (!thread1.Join(1000))
+                {
+                    thread1.Abort(); 
+                }
+            }
+            // 清理游戏框架资源
+            gameFramework?.MDispose();
+            // 清理GDI+资源
+            if (graphicsTemp != null)
+            {
+                graphicsTemp.Dispose();
+                graphicsTemp = null;
+            }
+            if (graphicsMain != null)
+            {
+                graphicsMain.Dispose();
+                graphicsMain = null;
+            }
+            if (bitmaptemp != null)
+            {
+                bitmaptemp.Dispose();
+                bitmaptemp = null;
+            }
         }
 
         #region 没用的逻辑

@@ -197,7 +197,8 @@ namespace _06_坦克大战_正式.logic
         public static void MDrawActiveObject()//绘制动态对象方法集合
         {
             //myTank = myTanktemp;//不需要这句，因为是引用类型，二者指向了同一个对象
-            if(myTank != null)
+            MEnemyTankBorn();
+            if (myTank != null)
             {
                 ClassShowLogic.MMoveCheck(myTanktemp);//先调用检测，如果撞墙了就将ismoving改为flase
                 if (myTanktemp.isMoving == true)
@@ -210,7 +211,6 @@ namespace _06_坦克大战_正式.logic
             //ClassEnemy enemyTankTemp =  MEnemyTankBorn();
             //if (enemyTankTemp != null)
             //    MEnemyBorn(enemyTankTemp);
-            MEnemyTankBorn();
             ClassShowLogic.MEnemyAI();//调用敌人ai改变敌人位置和移动状态
             foreach (ClassEnemy ey in listenemyTank)
                 ey.MDrawSelf();
@@ -226,7 +226,6 @@ namespace _06_坦克大战_正式.logic
         {
             //Random rt1 = new Random();
             int index = ra.Next(0, 3);//随机生成0-3（不包括3）的整数，即敌人出生地点坐标的索引
-            ClassSoundMananger.MMusicAdd();
             Point bornPoint = arraypoint1[index];//当前随机到的出生地点
             enemyTemp.X = bornPoint.X; 
             enemyTemp.Y = bornPoint.Y;
@@ -256,6 +255,9 @@ namespace _06_坦克大战_正式.logic
                     enemyTankTemp = new ClassEnemy(0, 0, 1, 180, Resources.SlowUp, Resources.SlowDown, Resources.SlowLeft, Resources.SlowRight);
                     break;
             }
+            //ClassSoundMananger.MMusicAdd();
+            //ClassGameFrameWork.EventMusic?.Invoke(EM_EventMusic.Add);//为毛不能这么搞呢？太奇怪了有啥不一样吗
+            ClassGameFrameWork.MRaiseEventMusic(EM_EventMusic.Add);
             enemyBornCount = 0;//生成一个敌人后，计数器归零
             enemyBornNow++;//敌人计数器+1
             MEnemyBorn(enemyTankTemp);

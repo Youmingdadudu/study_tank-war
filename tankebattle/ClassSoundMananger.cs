@@ -1,10 +1,12 @@
 ﻿using _06_坦克大战_正式.Properties;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Media;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace _06_坦克大战_正式
@@ -20,6 +22,11 @@ namespace _06_坦克大战_正式
         private static SoundPlayer SPblast = new SoundPlayer();
         private static SoundPlayer SPhit = new SoundPlayer();
         private static SoundPlayer SPfire = new SoundPlayer();
+        private static object soundLock = new object(); // 用于线程安全的锁
+
+        private static readonly ConcurrentQueue<Action> soundQueue = new ConcurrentQueue<Action>();
+        private static readonly Task soundProcessor;
+
         /*private static void initSound(int index)//通过音乐索引初始化音乐
         {
             switch (index)
@@ -41,8 +48,10 @@ namespace _06_坦克大战_正式
                     break;
             }
         }*/
+
         public static void initSound()
         {
+            //System.Diagnostics.Debug.WriteLine("开始加载音效资源");
             SPstart.Stream = Resources.start;
             SPadd.Stream = Resources.add;
             SPblast.Stream = Resources.blast;
@@ -51,40 +60,136 @@ namespace _06_坦克大战_正式
 
             //SPblast.SoundLocation = @"D:\biancheng\csharp\xuexibiji\第三季-坦克大战\06-坦克大战-正式\Resources\blast.wav";
 
-            SPadd.Load();
+            SPstart.Load();//再改回同步试试// 异步加载避免阻塞
             SPblast.Load();
             SPfire.Load();
             SPadd.Load();
-            SPfire.Load();//又好了，而且这段加不加都一样，一会延迟高的吓死人一会好了，真奇了怪了！该怎么解决延迟呢
+            SPfire.Load();//哎，还是不行，还是用多线程吧//从load改成loadasync试试//又好了，而且这段加不加都一样，一会延迟高的吓死人一会好了，真奇了怪了！该怎么解决延迟呢
+            
+            //Thread.Sleep(100);//等待加载完成
+            //System.Diagnostics.Debug.WriteLine("音效资源加载完成");
         }
-        public static void MMusicStart()
+
+        static ClassSoundMananger()
         {
-            //initSound(0);
-            SPstart.Play();//播放声音
+            soundProcessor = Task.Run(async () =>
+            {
+                while (true)
+                {
+                    if (soundQueue.TryDequeue(out var action))
+                    {
+                        action();
+                    }
+                    await Task.Delay(10);
+                }
+            });
+        }
+
+
+        public static void MMusicStart()//一个线程队列，能解决不
+        {
+            soundQueue.Enqueue(() =>
+            {
+                lock (soundLock)
+                {
+                    SPstart.Play();
+                }
+            });
+
+            //SPstart.Play();
+
+            //Task.Run(() =>
+            //{
+            //    lock (soundLock)
+            //    {
+            //       //if (SPstart != null)
+            //       // {
+            //            SPstart.Play();//播放声音
+            //        //}
+            //    }
+            //});
         }
         public static void MMusicAdd()
         {
-            //initSound(1);
-            SPadd.Play();
+            soundQueue.Enqueue(() =>
+            {
+                lock (soundLock)
+                {
+                    SPadd.Play();
+                }
+            });
+
+            //Task.Run(() => { lock (soundLock) { SPadd.Play(); } });
         }
         public static void MMusicBlast()
         {
-            //initSound(2);
-            SPblast.Play();
+            soundQueue.Enqueue(() =>
+            {
+                lock (soundLock)
+                {
+                    SPblast.Play();
+                }
+            });
+
+            //Task.Run(() => { lock (soundLock) { SPblast.Play(); } });
         }
         public static void MMusicHit()
         {
-            //initSound(3);
-            SPhit.Play();
+            soundQueue.Enqueue(() =>
+            {
+                lock (soundLock)
+                {
+                    SPhit.Play();
+                }
+            });
+
+            //Task.Run(() => { lock (soundLock) { SPhit.Play(); } });
         }
         public static void MMusicFire()
         {
-            //initSound(4);
-            SPfire.Play();
+            soundQueue.Enqueue(() =>
+            {
+                lock (soundLock)
+                {
+                    SPfire.Play();
+                }
+            });
+
+            //Task.Run(() => { lock (soundLock) { SPfire.Play(); } });
+        }
+
+        public static void MClean()//清理声音资源方法
+        {
+            SPstart?.Dispose();
+            SPadd?.Dispose();
+            SPblast?.Dispose();
+            SPhit?.Dispose();
+            SPfire?.Dispose();
+
+            SPstart = null;
+            SPadd = null;
+            SPblast = null;
+            SPhit = null;
+            SPfire = null;
         }
 
 
-        
+        //private static async Task MPlaySoundAsync(SoundPlayer player)
+        //{
+        //    if (player?.Stream == null) return;
+        //    await Task.Run(() =>
+        //    {
+        //        lock (soundLock)
+        //        {
+        //            player.Play();
+        //        }
+        //    });
+        //}
+        //没必要改这样了
+        //public static void MusicStart()
+        //{
+        //    _ = MPlaySoundAsync(SPstart);
+        //}
 
     }
 }

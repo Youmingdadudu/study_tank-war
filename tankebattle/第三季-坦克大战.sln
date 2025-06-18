@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36127.28
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "01-基础知识-类型转换", "01-基础知识\01-基础知识-类型转换.csproj", "{65F7D818-9431-4BAB-BC43-28672C830211}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "02-多线程", "多线程\02-多线程.csproj", "{CA09E97D-E478-4E6A-B2A0-2E31B5C1EE39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "03-WinForm", "03-WinForm\03-WinForm.csproj", "{51F1C926-AD93-429B-BECF-2C9121EE1CC4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "04-手动创建WinFrom窗体", "04-手动创建WinFrom窗体\04-手动创建WinFrom窗体.csproj", "{A77C2E45-8203-41D7-9855-B1BC110AE67F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "05-坦克大战", "05-坦克大战\05-坦克大战.csproj", "{CBF4099D-252E-4A09-BD32-1F490A84C6FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "06-坦克大战-正式", "06-坦克大战-正式\06-坦克大战-正式.csproj", "{BA63F473-66CC-4419-B824-99037E003119}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65F7D818-9431-4BAB-BC43-28672C830211}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65F7D818-9431-4BAB-BC43-28672C830211}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65F7D818-9431-4BAB-BC43-28672C830211}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65F7D818-9431-4BAB-BC43-28672C830211}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA09E97D-E478-4E6A-B2A0-2E31B5C1EE39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA09E97D-E478-4E6A-B2A0-2E31B5C1EE39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA09E97D-E478-4E6A-B2A0-2E31B5C1EE39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA09E97D-E478-4E6A-B2A0-2E31B5C1EE39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51F1C926-AD93-429B-BECF-2C9121EE1CC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51F1C926-AD93-429B-BECF-2C9121EE1CC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51F1C926-AD93-429B-BECF-2C9121EE1CC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51F1C926-AD93-429B-BECF-2C9121EE1CC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A77C2E45-8203-41D7-9855-B1BC110AE67F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A77C2E45-8203-41D7-9855-B1BC110AE67F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A77C2E45-8203-41D7-9855-B1BC110AE67F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A77C2E45-8203-41D7-9855-B1BC110AE67F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBF4099D-252E-4A09-BD32-1F490A84C6FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBF4099D-252E-4A09-BD32-1F490A84C6FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBF4099D-252E-4A09-BD32-1F490A84C6FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBF4099D-252E-4A09-BD32-1F490A84C6FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA63F473-66CC-4419-B824-99037E003119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA63F473-66CC-4419-B824-99037E003119}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA63F473-66CC-4419-B824-99037E003119}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA63F473-66CC-4419-B824-99037E003119}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BD369A78-D5D0-4520-A0AC-9AA69C80250D}
+	EndGlobalSection
+EndGlobal

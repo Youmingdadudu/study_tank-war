@@ -125,7 +125,8 @@ namespace _06_坦克大战_正式.logic
                         {
                             if (myTank != null)
                             {
-                                ClassSoundMananger.MMusicFire();
+                                //ClassSoundMananger.MMusicFire();
+                                ClassGameFrameWork.MRaiseEventMusic(EM_EventMusic.Fire);
                                 MCreateBullet(myTank.X, myTank.Y, 5, myTank.Width, myTank.Height, myTank.dir, EM_Tag.myTank);
                             }
                         }
@@ -180,33 +181,72 @@ namespace _06_坦克大战_正式.logic
         //    }
         //        return null;
         //}//先隐藏，boss不加入道具列表了，直接单独判定，所以暂时用不上道具判断了
-        private static ClassEnemy MIsCollidedBullet/*Tank*/(ClassActiveObject bullet,Rectangle rta/*, List<ClassEnemy> listtank*/)//发现用不着这个参数，直接传递敌坦克列表就行
+        
+        private static ClassEnemy MIsCollidedBulletEnemyTank(/*ClassActiveObject bullet,*/Rectangle rta/*, List<ClassEnemy> listtank*/)//发现用不着这个参数，直接传递敌坦克列表就行
         {//灵感，把所有的碰撞检测合并，然后通过传递的参数列表来灵活检测，例如传递墙列表就检测墙，道具列表就检测道具。如果是子弹..等会，不行，这些都不是一个类不能用一个参数列表类型，美梦破灭了233
-            if (bullet.tag == EM_Tag.myTank)
+
+            #region 旧通用方法。但mytank有hp后就不能用这个了，得分开
+            /* if (bullet.tag == EM_Tag.myTank)
+             {
+                 foreach (ClassEnemy ao in listenemyTank)
+                 {
+                     if (ao.rectangle.IntersectsWith(rta))
+                     {
+                         //enemyBornNow--;//如果想要消灭后一直生成坦克就需要让集合计数器-1
+                         ClassSoundMananger.MMusicHit();
+                         return ao;
+                     } 
+                 }
+             }
+             else if (myTank != null && bullet.tag == EM_Tag.enemyTank)
+             {
+                 if (myTank.rectangle.IntersectsWith(rta))
+                 {
+                         //myTank.isHave = false;//目前的模式是调用重生，而不是被毁
+                         myTank.MRebirth();
+                         ClassSoundMananger.MMusicHit();
+                         ClassEnemy classEnemy = new ClassEnemy();//用于触发爆炸特效的临时坦克。因为代码原因不能直接返回mytank。幸好我有先见之明早早做了无参构造方法备着2333
+                         return classEnemy;  
+                 } 
+             }
+             return null;*/
+            #endregion
+            foreach (ClassEnemy ao in listenemyTank)//发现用不到子弹对象，传递一个子弹的矩形就够了
             {
-                foreach (ClassEnemy ao in listenemyTank)
+                if (ao.rectangle.IntersectsWith(rta))
                 {
-                    if (ao.rectangle.IntersectsWith(rta))
-                    {
-                        //enemyBornNow--;//如果想要消灭后一直生成坦克就需要让集合计数器-1
-                        ClassSoundMananger.MMusicHit();
-                        return ao;
-                    } 
+                    //enemyBornNow--;//如果想要消灭后一直生成坦克就需要让集合计数器-1
+                    //ClassSoundMananger.MMusicHit();
+                    ClassGameFrameWork.MRaiseEventMusic(EM_EventMusic.Hit);
+                    listdestroyTank.Add(ao);
+                    return ao;
                 }
-            }
-            else if (myTank != null && bullet.tag == EM_Tag.enemyTank)
-            {
-                if (myTank.rectangle.IntersectsWith(rta))
-                {
-                    myTank.isHave = false;
-                    ClassSoundMananger.MMusicHit();
-                    ClassEnemy classEnemy = new ClassEnemy();//用于触发爆炸特效的临时坦克。因为代码原因不能直接返回mytank。幸好我有先见之明早早做了无参构造方法备着2333
-                    return classEnemy;
-                }
-                    
             }
             return null;
         }
+        public static bool MIsCollidedBulletMyTank(Rectangle rta,int x,int y)
+        {
+            if (myTank.rectangle.IntersectsWith(rta))
+            {
+                if (myTank.HP > 0)
+                {
+                    //ClassSoundMananger.MMusicHit();
+                    ClassGameFrameWork.MRaiseEventMusic(EM_EventMusic.Hit);
+                    myTank.HP--;
+                    return true;
+                }
+                else
+                {
+                    //ClassSoundMananger.MMusicHit();
+                    ClassGameFrameWork.MRaiseEventMusic(EM_EventMusic.Hit);
+                    MCreateExplsion(x,y);
+                    myTank.MRebirth();
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private static ClassActiveObject MIsCollidedTank(ClassActiveObject AObject, Rectangle rta)//发现将子弹用的坦克碰撞改一改就行不用单开233.加个判定只有子弹碰撞才会弄坏mytank就好了
         {//算了还是再改一个吧不想再改类了，还是写方法糊墙方便233
             if (myTank == null) return null;//如果我的坦克不存在就不用判定了
@@ -357,13 +397,31 @@ namespace _06_坦克大战_正式.logic
             //{
             //    AObject.isMoving = false; return;
             //}
-           
-            ClassEnemy tempEY = MIsCollidedBullet(AObject, rtaTemp); //检测是否碰到坦克
-            if (MIsCollidedBullet(AObject,rtaTemp) != null)
+
+            if(AObject.tag  == EM_Tag.myTank)//检测子弹是否碰到敌方坦克
             {
-                AObject.isMoving = false;
-                MCreateExplsion(xPosition, yPosition);
-                listdestroyTank.Add(tempEY);
+                if (MIsCollidedBulletEnemyTank(rtaTemp) != null)
+                {
+                    AObject.isMoving = false;
+                    MCreateExplsion(xPosition, yPosition);
+                    return;
+                }
+            }
+            else if(AObject.tag == EM_Tag.enemyTank)//检测子弹是否碰到my坦克
+            {
+                //ClassEnemy tempEY = MIsCollidedBulletEnemyTank(/*AObject,*/ rtaTemp); 
+                //if (tempEY != null)
+                //{
+                    //MCreateExplsion(xPosition, yPosition);
+                    //listdestroyTank.Add(tempEY);//集中到碰撞方法里去这里直接调用就行
+                //}
+                
+                if(MIsCollidedBulletMyTank(rtaTemp, xPosition, yPosition))
+                {
+                    AObject.isMoving = false;
+                    return;
+                }
+                
             }
         }
         #endregion
@@ -430,7 +488,8 @@ namespace _06_坦克大战_正式.logic
             //{(ey.attackCounter == enemyAttackMax)应该这么写逻辑，不过实际上不用写，因为就两种情况要么不满足要么开火，既然上面不满足就return那这里就不用判定了233
             lock (_lock)
             {
-                ClassSoundMananger.MMusicFire();
+                //ClassSoundMananger.MMusicFire();
+                ClassGameFrameWork.MRaiseEventMusic(EM_EventMusic.Fire);
                 MCreateBullet(ey.X, ey.Y, enemyBulletSpeed, ey.Width, ey.Height, ey.dir, EM_Tag.enemyTank);
             }
             ey.attackCounter = 0;//发射子弹后计数器归零
@@ -570,7 +629,8 @@ namespace _06_坦克大战_正式.logic
         #region //爆炸特效逻辑
         public static void MCreateExplsion(int x, int y)
         {
-            ClassSoundMananger.MMusicBlast();
+            //ClassSoundMananger.MMusicBlast();
+            ClassGameFrameWork.MRaiseEventMusic(EM_EventMusic.Blast);//爆炸音效事件，直接调用框架的事件方法，框架会自动处理音效播放
             ClassAct newExplsion = new ClassAct(x,y,0,3);
             listexplsion.Add(newExplsion);
         }
